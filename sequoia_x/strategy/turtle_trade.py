@@ -48,7 +48,7 @@ class TurtleTradeStrategy(BaseStrategy):
                 # 核心条件 1：突破前 20 天最高点
                 breakout = last["close"] > last["high_20"]
                 # 核心条件 2：流动性过亿
-                liquid = last["turnover"] > 200_000_000
+                liquid = last["turnover"] > 500_000_000
 
                 # 【新增防守条件】拒绝郑州煤电式的高开低走大阴线！
                 is_yang = last["close"] > last["open"]   # 实体必须是阳线（红柱）

@@ -16,7 +16,7 @@ class RpsBreakoutStrategy(BaseStrategy):
     def run(self) -> list[str]:
         try:
             with sqlite3.connect(self.engine.db_path) as conn:
-                df = pd.read_sql("SELECT symbol, date, close, high FROM stock_daily", conn)
+                df = pd.read_sql("SELECT symbol, date, close, high, turnover FROM stock_daily", conn)
         except Exception as exc:
             logger.error(f"读取数据库失败: {exc}")
             return []
@@ -50,7 +50,10 @@ class RpsBreakoutStrategy(BaseStrategy):
 
         # 突破判定
         breakout_condition = strong_stocks['close'] >= strong_stocks['roll_high'] * 0.90
-        selected = strong_stocks[breakout_condition]
+
+        turnover_condition = strong_stocks['turnover'] >= 500_000_000  # 新增：成交额超过5亿
+
+        selected = strong_stocks[breakout_condition & turnover_condition]
 
         logger.info(f"RpsBreakoutStrategy 选出 {len(selected)} 只股票")
         return selected['symbol'].tolist()
